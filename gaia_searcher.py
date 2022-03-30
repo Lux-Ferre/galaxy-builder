@@ -68,11 +68,11 @@ def spectral_classifier(row: pd.Series) -> str:
     return stellar_class
 
 df = open_votable()
-#df['spectral_class'] = df.apply(spectral_classifier, axis=1)
+df['spectral_class'] = df.apply(spectral_classifier, axis=1)
 
-lum_array = df[["teff_val", "lum_val"]].to_numpy()
+#lum_array = df[["teff_val", "lum_val"]].to_numpy()
 
-plt.imsave("plot.png", lum_array)
+#plt.imsave("plot.png", lum_array)
 
 
-#print(df)
+print(df)
