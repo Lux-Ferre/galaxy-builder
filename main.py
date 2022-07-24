@@ -7,9 +7,9 @@ def create_classification():
     new_classification = None
 
     while not new_classification:
-        new_classification = gui_get_info("Classification")
+        new_classification, is_random = gui_get_info("Classification")
 
-        if new_classification.casefold() == "random":
+        if is_random:
             body_classifications = ["M", "K", "G", "F", "A", "B", "O"]
             classification = random.choice(body_classifications)
             new_classification = StellarClassification(classification)
@@ -21,9 +21,9 @@ def create_name():
     name = None
 
     while not name:
-        name = gui_get_info("Name")
+        name, is_random = gui_get_info("Name")
 
-        if name.casefold() == "random":
+        if is_random:
             name = f"Alpha-Ocelot{random.randint(0, 9)}"
 
     return name
@@ -33,9 +33,9 @@ def create_satellites():
     sat_number = None
 
     while not sat_number:
-        sat_number = gui_get_info("Satellite Number")
+        sat_number, is_random = gui_get_info("Satellite Number")
 
-        if sat_number.casefold() == "random":
+        if is_random:
             sat_number = random.randint(0, 15)
 
     return sat_number
@@ -45,25 +45,22 @@ def create_colonization_state():
     colonization_state = None
 
     while not colonization_state:
-        colonization_state = gui_get_info("Colonization State")
+        colonization_state, is_random = gui_get_info("Colonization State")
 
-        if colonization_state.casefold() == "random":
+        if is_random:
             colonization_state = random.choice([True, False])
 
     return colonization_state
 
 
-def create_owner(colonization_state: bool):
+def create_owner():
     owner = None
 
     while not owner:
-        owner = gui_get_info("Owner")
+        owner, is_random = gui_get_info("Owner")
 
-        if owner.casefold() == "random":
-            if colonization_state:
-                owner = f"Beta-Serval{random.randint(0, 9)}"
-            else:
-                owner = None
+        if is_random:
+            owner = f"Beta-Serval{random.randint(0, 9)}"
 
     return owner
 
@@ -74,18 +71,18 @@ def create_location():
     distance = None
 
     while not theta_angle:
-        theta_angle = gui_get_info("Location-Theta")
-        if theta_angle.casefold() == "random":
+        theta_angle, is_random = gui_get_info("Location-Theta")
+        if is_random:
             theta_angle = random.randint(-180, 180)
 
     while not lambda_angle:
-        lambda_angle = gui_get_info("Location-Lambda")
-        if lambda_angle.casefold() == "random":
+        lambda_angle, is_random = gui_get_info("Location-Lambda")
+        if is_random:
             lambda_angle = random.randint(-90, 90)
 
     while not distance:
-        distance = gui_get_info("Location-Distance")
-        if distance.casefold() == "random":
+        distance, is_random = gui_get_info("Location-Distance")
+        if is_random:
             distance = random.randint(0, 10000)
 
     new_location = GalacticPosition(theta_angle, lambda_angle, distance)
@@ -93,15 +90,21 @@ def create_location():
     return new_location
 
 
-def gui_get_info(info_type: str) -> str:
-    layout = [[sg.Text("Enter a name: "), sg.InputText(), sg.Button("OK")]]
+def gui_get_info(info_type: str) -> str, bool:
+    is_random = False
+    layout = [[sg.Radio(" ", "random_select", default=True), sg.Text(f"Enter {info_type}: "), sg.InputText(key="data"),],
+    [sg.Radio("Random", "random_select", default=True, key="is_random")],
+    [sg.Button("OK")]]
     window = sg.Window(f"Celestial Body: {info_type}", layout, margins=(10, 10))
 
     event, values = window.read()
     window.close()
-    data = values[0]
+    if values["is_random"]:
+        is_random = True
+    
+    data = values["data"]
 
-    return data
+    return data, is_random
 
 
 def create_celestial_body():
