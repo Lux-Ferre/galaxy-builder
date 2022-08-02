@@ -66,25 +66,23 @@ def create_owner():
 
 
 def create_location():
-    theta_angle = None
-    lambda_angle = None
-    distance = None
+    loc_data = gui_get_location()
 
-    while not theta_angle:
-        theta_angle, is_random = gui_get_info("Location-Theta")
-        if is_random:
-            theta_angle = random.randint(-180, 180)
-
-    while not lambda_angle:
-        lambda_angle, is_random = gui_get_info("Location-Lambda")
-        if is_random:
-            lambda_angle = random.randint(-90, 90)
-
-    while not distance:
-        distance, is_random = gui_get_info("Location-Distance")
-        if is_random:
-            distance = random.randint(0, 10000)
-
+    if not loc_data["theta_is_random"]:
+        theta_angle = loc_data["theta_data"]
+    else:
+        theta_angle = random.randint(-180, 180)
+ 
+    if not loc_data["lambda_is_random"]:
+        theta_angle = loc_data["lambda_data"]
+    else:
+        theta_angle = random.randint(-90, 90)
+ 
+    if not loc_data["distance_is_random"]:
+        theta_angle = loc_data["distance_data"]
+    else:
+        theta_angle = random.randint(0, 10000)
+ 
     new_location = GalacticPosition(theta_angle, lambda_angle, distance)
 
     return new_location
@@ -105,6 +103,18 @@ def gui_get_info(info_type: str) -> str, bool:
     data = values["data"]
 
     return data, is_random
+
+def gui_get_location() -> dict:
+    layout = [[sg.Radio(" ", "theta_select", default=True), sg.InputText(key="theta_data"), sg.Radio("Random", "theta_select", default=True, key="theta_is_random")],
+    [[sg.Radio(" ", "lambda_select", default=True), sg.InputText(key="lambda_data"), sg.Radio("Random", "lambda_select", default=True, key="lambda_is_random")],
+    [[sg.Radio(" ", "distance_select", default=True), sg.InputText(key="distance_data"), sg.Radio("Random", "distance_select", default=True, key="distance_is_random")],
+    [sg.Button("OK")]]
+    window = sg.Window(f"Celestial Body: Location Data", layout, margins=(10, 10))
+
+    event, values = window.read()
+    window.close()
+
+    return values
 
 
 def create_celestial_body():
