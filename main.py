@@ -74,21 +74,21 @@ def create_location():
         theta_angle = random.randint(-180, 180)
  
     if not loc_data["lambda_is_random"]:
-        theta_angle = loc_data["lambda_data"]
+        lambda_angle = loc_data["lambda_data"]
     else:
-        theta_angle = random.randint(-90, 90)
+        lambda_angle = random.randint(-90, 90)
  
     if not loc_data["distance_is_random"]:
-        theta_angle = loc_data["distance_data"]
+        distance = loc_data["distance_data"]
     else:
-        theta_angle = random.randint(0, 10000)
+        distance = random.randint(0, 10000)
  
     new_location = GalacticPosition(theta_angle, lambda_angle, distance)
 
     return new_location
 
 
-def gui_get_info(info_type: str) -> str, bool:
+def gui_get_info(info_type: str):
     is_random = False
     layout = [[sg.Radio(" ", "random_select", default=True), sg.Text(f"Enter {info_type}: "), sg.InputText(key="data"),],
     [sg.Radio("Random", "random_select", default=True, key="is_random")],
@@ -104,11 +104,13 @@ def gui_get_info(info_type: str) -> str, bool:
 
     return data, is_random
 
+
 def gui_get_location() -> dict:
     layout = [[sg.Radio(" ", "theta_select", default=True), sg.InputText(key="theta_data"), sg.Radio("Random", "theta_select", default=True, key="theta_is_random")],
-    [[sg.Radio(" ", "lambda_select", default=True), sg.InputText(key="lambda_data"), sg.Radio("Random", "lambda_select", default=True, key="lambda_is_random")],
-    [[sg.Radio(" ", "distance_select", default=True), sg.InputText(key="distance_data"), sg.Radio("Random", "distance_select", default=True, key="distance_is_random")],
+    [sg.Radio(" ", "lambda_select", default=True), sg.InputText(key="lambda_data"), sg.Radio("Random", "lambda_select", default=True, key="lambda_is_random")],
+    [sg.Radio(" ", "distance_select", default=True), sg.InputText(key="distance_data"), sg.Radio("Random", "distance_select", default=True, key="distance_is_random")],
     [sg.Button("OK")]]
+
     window = sg.Window(f"Celestial Body: Location Data", layout, margins=(10, 10))
 
     event, values = window.read()
@@ -122,7 +124,7 @@ def create_celestial_body():
     classification = create_classification()
     satellites = create_satellites()
     colonized = create_colonization_state()
-    owner = create_owner(colonized)
+    owner = create_owner()
     location = create_location()
 
     new_celestial_body = CelestialBody(name, classification, satellites, colonized, owner, location)
